@@ -29,7 +29,7 @@ layout("layout.phtml");
     </h1>
 
     <!-- Blog Posts -->
-    <div ng-repeat="(n, posting) in postings track by n">
+    <div ng-repeat="(n, posting) in postings track by n" ng-cloak>
         <h2>
             <a href="/postings/{{posting.id}}">{{posting.title}}</a>
         </h2>
