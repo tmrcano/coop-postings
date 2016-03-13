@@ -1,0 +1,57 @@
+<?php
+if(!isset($model->sTitle)){
+    $model = json_decode($model)[0];
+    $model->sTitle = $model->title;
+}
+layout("layout.phtml");
+?>
+
+<script>
+    // this is where we populate the page dynamically
+    angular.module("myApp", []).controller("myCtrl", function ($scope, $http) {
+        $scope.postings = [];
+        $scope.loadContent = function(){
+            $http.get("/postings").then(function(oData){
+                $scope.postings = oData.data;
+            }, function(oErr){
+                console.log(JSON.stringify(oErr));
+            });
+        };
+        $scope.loadContent();
+    });
+
+</script>
+<!-- Blog Entries Column -->
+<div ng-app="myApp" ng-controller="myCtrl">
+    <h1 class="page-header">
+        Page Heading
+        <small>Secondary Text</small>
+    </h1>
+
+    <!-- Blog Posts -->
+    <div ng-repeat="(n, posting) in postings track by n">
+        <h2>
+            <a href="/postings/{{posting.id}}">{{posting.title}}</a>
+        </h2>
+        <p class="lead">
+            by {{posting.hiringOrganizationName}}
+        </p>
+        <p><span class="glyphicon glyphicon-time"></span> Posted on {{posting.datePosted}}</p>
+        <hr>
+        <img class="img-responsive" src="http://placehold.it/900x300" alt="">
+        <hr>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolore, veritatis, tempora, necessitatibus inventore nisi quam quia repellat ut tempore laborum possimus eum dicta id animi corrupti debitis ipsum officiis rerum.</p>
+        <a class="btn btn-primary" href="/postings/{{posting.id}}">Read More <span class="glyphicon glyphicon-chevron-right"></span></a>
+
+        <hr>
+    </div>
+    <!-- Pager -->
+    <ul class="pager">
+        <li class="previous">
+            <a href="#">&larr; Older</a>
+        </li>
+        <li class="next">
+            <a href="#">Newer &rarr;</a>
+        </li>
+    </ul>
+</div>
