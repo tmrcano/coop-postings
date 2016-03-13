@@ -1,6 +1,4 @@
-# The Spark Micro-framework on Openshift
-
-###Make a quick java webapp, clone it into a DIY cartridge on Openshift.
+# Co-op Job postings starting point
 
 The spark framework matches RESTfull resources in a Jetty webserver with Java code. This example also uses a templating engine that allows php code to access a java model object with shared layouts.
 
@@ -19,5 +17,3 @@ We will be using the Spark Micro-Framework to make a Java Webapp for the second 
 ![/notes](slidenoteend://)
 
 ![/slide0](slideend:://)
-
-
