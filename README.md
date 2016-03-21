@@ -1,6 +1,6 @@
 # Co-op Job postings starting point
 
-The spark framework matches RESTfull resources in a Jetty webserver with Java code. This example also uses a templating engine that allows php code to access a java model object with shared layouts.
+The spark framework matches RESTfull resources in a Jetty webserver with Java code. This example also uses a templating engine that allows php code to access a java model object with shared layouts. We are using the spark framework to create a webapp to match students with co-op jobs.
 
 ![slide0](slidestart://?class="step+slide"+data-x="-1000"+data-y="-2200")
 
