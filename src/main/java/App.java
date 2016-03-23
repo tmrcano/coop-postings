@@ -2,8 +2,7 @@ import java.sql.*;
 
 import com.salesucation.sparkphp.PHPRenderer;
 
-import io.github.rhildred.OpenShiftSQLiteSource;
-import io.github.rhildred.ResultSetValue;
+import io.github.rhildred.*;
 
 import static spark.Spark.*;
 
@@ -63,6 +62,21 @@ public class App
                 }
                 return rc;
 
+            });
+            get("/login", (request, response) -> {
+                String rc = "";
+                Oauth2 oauth = new Oauth2("Your client id", "Your client secret", request.url(), request.session().raw());
+                try {
+                    if (request.queryParams("code") != null) {
+                        oauth.handleCode(request.queryParams("code"));
+                        rc = oauth.getName();
+                    } else {
+                        oauth.redirect(response.raw());
+                    }
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+                return rc;
             });
         }catch(Exception e){
         	e.printStackTrace();
