@@ -69,7 +69,7 @@ public class App
                 try {
                     if (request.queryParams("code") != null) {
                         oauth.handleCode(request.queryParams("code"));
-                        rc = oauth.getName();
+                        rc = oauth.getCreds().toJSONString();
                     } else {
                         oauth.redirect(response.raw());
                     }

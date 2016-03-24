@@ -82,27 +82,15 @@ public class Oauth2 {
             // now we can get the user info
             String sUserInfoUrl = "https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=%s";
             JSONObject oInfo = (JSONObject) conn.downloadJson(String.format(sUserInfoUrl, sAccessToken));
-            this.Session.setAttribute("sName", (String)oInfo.get("name"));
-            this.Session.setAttribute("sGoogleId", (String)oInfo.get("id"));
-            this.Session.setAttribute("sEmail", (String)oInfo.get("email"));
+            this.Session.setAttribute("creds", oInfo);
 
         }
 
     }
 
-	public String getName()
+	public JSONObject getCreds()
 	{
-		return (String)this.Session.getAttribute("sName");
-	}
-
-	public String getGoogleId()
-	{
-		return (String)this.Session.getAttribute("sGoogleId");
-	}
-
-	public String getEmail()
-	{
-		return (String)this.Session.getAttribute("sEmail");
+		return (JSONObject)this.Session.getAttribute("creds");
 	}
 
 	public void close() {
