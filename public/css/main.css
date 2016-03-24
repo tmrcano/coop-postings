@@ -10,3 +10,8 @@ this is where css goes
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
   display: none !important;
 }
+
+p .btn{
+  display: block;
+  margin: 1.2em auto;
+}
