@@ -8,6 +8,15 @@ import org.apache.http.*;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Map;
+import java.io.File;
+
+
+
 
 import javax.servlet.http.*;
 
@@ -17,11 +26,25 @@ public class Oauth2 {
 	private String sKey = null, sSecretToken = null, sRedirect = null;
 	private HttpSession Session = null;
 
-	public Oauth2(String sClientId, String sSecret, String sReturnUrl,
-			HttpSession sess) {
+	public Oauth2(String sReturnUrl, HttpSession sess) {
 		this.conn = new WebClient();
-		this.sKey = sClientId;
-		this.sSecretToken = sSecret;
+
+		this.sKey = "Will be replaced from json";
+		this.sSecretToken = "Will be replaced from json";
+		try{
+			ObjectMapper mapper = new ObjectMapper();
+
+			// read JSON from a file
+			Map<String, Object> map = mapper.readValue(
+					new File(System.getProperty("user.dir") + "/../data/creds/google.json"),
+					new TypeReference<Map<String, Object>>() {
+					});
+
+			this.sKey = (String) map.get("ClientID");
+			this.sSecretToken = (String) map.get("ClientSecret");
+		}catch (Exception e){
+			e.printStackTrace();
+		}
 
 		this.sRedirect = sReturnUrl;
 		if (!this.sRedirect.contains("localhost")) {

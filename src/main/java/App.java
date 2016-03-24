@@ -65,7 +65,7 @@ public class App
             });
             get("/login", (request, response) -> {
                 String rc = "";
-                Oauth2 oauth = new Oauth2("Your client id", "Your client secret", request.url(), request.session().raw());
+                Oauth2 oauth = new Oauth2(request.url(), request.session().raw());
                 try {
                     if (request.queryParams("code") != null) {
                         oauth.handleCode(request.queryParams("code"));
