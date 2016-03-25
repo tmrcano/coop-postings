@@ -39,11 +39,16 @@ public class App
                 String rc = "";
                 PreparedStatement oStmt = null;
                 try{
+                    String sModel = "{";
+                    JSONObject oInfo = oauth.getCreds(request.session().raw());
+                    if(oInfo != null){
+                        sModel = sModel + "\"currentUser\":" + oInfo.toJSONString() + ",";
+                    }
                     String sSQL = "SELECT * FROM jobpostings WHERE id = ?";
                     oStmt = connection.prepareStatement(sSQL);
                     oStmt.setString(1, request.params(":page"));
                     ResultSet oRs = oStmt.executeQuery();
-                    String sModel = ResultSetValue.toJsonString(oRs);
+                    sModel = sModel + "\"data\":" + ResultSetValue.toJsonString(oRs) + "}";
                     oRs.close();
                     rc = php.render("page.phtml", sModel);
 
