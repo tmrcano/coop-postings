@@ -2,6 +2,10 @@ import java.sql.*;
 
 import com.salesucation.sparkphp.PHPRenderer;
 
+import org.json.simple.JSONObject;
+
+import javax.servlet.http.HttpSession;
+
 import io.github.rhildred.*;
 
 import static spark.Spark.*;
@@ -21,9 +25,15 @@ public class App
         PHPRenderer php = new PHPRenderer();
         php.setViewDir("views/");
         final Connection connection = OpenShiftSQLiteSource.getConnection();
+        final Oauth2 oauth = new Oauth2();
         try{
             get("/", (request, response) -> {
-                return php.render("index.phtml");
+                String sModel = "{}";
+                JSONObject oInfo = oauth.getCreds(request.session().raw());
+                if(oInfo != null){
+                    sModel = "{\"currentUser\":" + oInfo.toJSONString() + "}";
+                }
+                return php.render("index.phtml", sModel);
             });
             get("/postings/:page", (request, response) -> {
                 String rc = "";
@@ -63,20 +73,42 @@ public class App
                 return rc;
 
             });
-            get("/login", (request, response) -> {
+            get("/login/:type", (request, response) -> {
                 String rc = "";
-                Oauth2 oauth = new Oauth2(request.url(), request.session().raw());
                 try {
-                    if (request.queryParams("code") != null) {
-                        oauth.handleCode(request.queryParams("code"));
-                        rc = oauth.getCreds().toJSONString();
-                    } else {
-                        oauth.redirect(response.raw());
-                    }
+                    HttpSession sess = request.session().raw();
+                    sess.setAttribute("referer", request.headers("referer"));
+                    sess.setAttribute("type", request.params(":type"));
+                    //get rid of :type from login url
+                    oauth.redirect(request.url().replaceAll("/([^/]*)$", ""), response.raw());
+
                 }catch(Exception e){
                     e.printStackTrace();
                 }
                 return rc;
+            });
+            get("/login", (request, response) -> {
+                String rc = "";
+                try {
+                    HttpSession sess = request.session().raw();
+                    JSONObject oInfo = oauth.handleCode(request.queryParams("code"));
+                    oInfo.put("type", sess.getAttribute("type"));
+                    sess.setAttribute("creds", oInfo);
+                    response.redirect((String)sess.getAttribute("referer"));
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+                return rc;
+            });
+            get("/currentUser", (request, response) -> {
+                JSONObject oInfo = oauth.getCreds(request.session().raw());
+                if(oInfo == null){
+                    halt(401, "not logged in");
+                }else {
+                    return oInfo.toJSONString();
+                }
+                // shouldn't get here
+                return "";
             });
         }catch(Exception e){
         	e.printStackTrace();

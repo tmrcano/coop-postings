@@ -1,6 +1,8 @@
 @import url("bootstrap.css");
 @import url("blog-home.css");
 @import url("blog-post.css");
+@import url("font-awesome.css");
+@import url("bootstrap-social.css");
 /*
 
 this is where css goes
@@ -9,9 +11,4 @@ this is where css goes
 
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
   display: none !important;
-}
-
-p .btn{
-  display: block;
-  margin: 1.2em auto;
 }

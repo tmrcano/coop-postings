@@ -1,6 +1,9 @@
 <?php
-$model = new stdClass();
-$model->sTitle = "Coop Postings";
+if(!isset($model->sTitle)){
+    $model = json_decode($model);
+    $model->sTitle = "Coop Postings";
+    //print_r($model);
+}
 layout("layout.phtml");
 ?>
 

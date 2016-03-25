@@ -24,9 +24,8 @@ public class Oauth2 {
 
 	private WebClient conn = null;
 	private String sKey = null, sSecretToken = null, sRedirect = null;
-	private HttpSession Session = null;
 
-	public Oauth2(String sReturnUrl, HttpSession sess) {
+	public Oauth2() {
 		this.conn = new WebClient();
 
 		this.sKey = "Will be replaced from json";
@@ -46,15 +45,14 @@ public class Oauth2 {
 			e.printStackTrace();
 		}
 
+	}
+
+	public void redirect(String sReturnUrl, HttpServletResponse res) throws IOException {
 		this.sRedirect = sReturnUrl;
 		if (!this.sRedirect.contains("localhost")) {
 			String sPattern = ":\\d\\d*";
 			this.sRedirect = this.sRedirect.replaceAll(sPattern, "");
 		}
-		this.Session = sess;
-	}
-
-	public void redirect(HttpServletResponse res) throws IOException {
 		String sAuthUrl = "https://accounts.google.com/o/oauth2/auth?redirect_uri=%s&client_id=%s&scope=https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email&response_type=code&max_auth_age=0";
 		String sRedirectToGoogle = String.format(sAuthUrl, this.sRedirect,
 				this.sKey);
@@ -62,35 +60,30 @@ public class Oauth2 {
 
 	}
 
-	public void handleCode(String sCode) throws IOException, ParseException
+	public JSONObject handleCode(String sCode) throws IOException, ParseException
     {
-        if (this.Session.getAttribute("sGoogleId") == null)
-        {
-            //step 5
-            // then google has redirected to us so build up query for 2nd phase of authentication
-            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(5);
-            nameValuePairs.add(new BasicNameValuePair("grant_type", "authorization_code"));
-            nameValuePairs.add(new BasicNameValuePair("client_id", this.sKey));
-            nameValuePairs.add(new BasicNameValuePair("client_secret", this.sSecretToken));
-            nameValuePairs.add(new BasicNameValuePair("code", sCode));
-            nameValuePairs.add(new BasicNameValuePair("redirect_uri", this.sRedirect));
+		//step 5
+		// then google has redirected to us so build up query for 2nd phase of authentication
+		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(5);
+		nameValuePairs.add(new BasicNameValuePair("grant_type", "authorization_code"));
+		nameValuePairs.add(new BasicNameValuePair("client_id", this.sKey));
+		nameValuePairs.add(new BasicNameValuePair("client_secret", this.sSecretToken));
+		nameValuePairs.add(new BasicNameValuePair("code", sCode));
+		nameValuePairs.add(new BasicNameValuePair("redirect_uri", this.sRedirect));
 
-            JSONObject oResult = (JSONObject) this.conn.downloadJson("https://accounts.google.com/o/oauth2/token", nameValuePairs);
-            String sAccessToken = (String)oResult.get("access_token");
+		JSONObject oResult = (JSONObject) this.conn.downloadJson("https://accounts.google.com/o/oauth2/token", nameValuePairs);
+		String sAccessToken = (String)oResult.get("access_token");
 
-            // step 7
-            // now we can get the user info
-            String sUserInfoUrl = "https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=%s";
-            JSONObject oInfo = (JSONObject) conn.downloadJson(String.format(sUserInfoUrl, sAccessToken));
-            this.Session.setAttribute("creds", oInfo);
-
-        }
-
+		// step 7
+		// now we can get the user info
+		String sUserInfoUrl = "https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=%s";
+		JSONObject oInfo = (JSONObject) conn.downloadJson(String.format(sUserInfoUrl, sAccessToken));
+		return oInfo;
     }
 
-	public JSONObject getCreds()
+	public JSONObject getCreds(HttpSession sess)
 	{
-		return (JSONObject)this.Session.getAttribute("creds");
+		return (JSONObject)sess.getAttribute("creds");
 	}
 
 	public void close() {
