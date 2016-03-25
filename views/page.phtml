@@ -2,7 +2,6 @@
 if(!isset($model->sTitle)){
     $model = json_decode($model);
     $model->sTitle = $model->data[0]->title;
-    print_r($model);
 }
 layout("layout.phtml");
 $model = $model->data[0];

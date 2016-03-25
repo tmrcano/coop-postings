@@ -22,10 +22,22 @@
     <![endif]-->
     <!-- we use angular in sub pages which have their own controller -->
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+    <script>
+        // this is where we initialize the app global and populate the well
+        var app = angular.module("myApp", []);
+        app.controller("wellCtrl", function ($scope, $http) {
+            $scope.currentUser = null;
+            <?php
+                if(isset($model->currentUser)){
+                    echo '$scope.currentUser = ' . json_encode($model->currentUser);
+                }
+            ?>;
+        });
 
+    </script>
 </head>
 
-<body>
+<body ng-app="myApp">
 
 <!-- Navigation -->
 <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -70,7 +82,7 @@
         <div class="col-md-4">
 
             <!-- Posting Search Well -->
-            <div class="well">
+            <div class="well" ng-cloak>
                 <h4>Posting Search</h4>
                 <div class="input-group">
                     <input type="text" class="form-control">
@@ -84,14 +96,19 @@
             </div>
 
             <!-- Participation Well -->
-            <div class="well">
-                <h4>Participate in Coop Postings</h4>
-                <p><a class="btn btn-block btn-social btn-google" href="/login/searcher">
-                    <span class="fa fa-google"></span> Job Searcher
-                </a></p>
-                <p><a class="btn btn-block btn-social btn-google" href="/login/poster">
-                    <span class="fa fa-google"></span> Job Poster
-                </a></p>
+            <div class="well" ng-controller="wellCtrl">
+                <div ng-hide="currentUser != null">
+                    <h4>Participate in Coop Postings</h4>
+                    <p><a class="btn btn-block btn-social btn-google" href="/login/searcher">
+                        <span class="fa fa-google"></span> Job Searcher
+                    </a></p>
+                    <p><a class="btn btn-block btn-social btn-google" href="/login/poster">
+                        <span class="fa fa-google"></span> Job Poster
+                    </a></p>
+                </div>
+                <div ng-hide="currentUser == null">
+                    <h4>{{currentUser.name}} ... {{currentUser.type}}</h4>
+                </div>
             </div>
 
             <!-- Posting Categories Well -->
