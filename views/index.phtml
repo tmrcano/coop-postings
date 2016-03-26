@@ -16,6 +16,11 @@ layout("layout.phtml");
             }
         ?>;
         $scope.postings = [];
+        <?php
+            if(isset($model->data)){
+                echo '$scope.postings = ' . json_encode($model->data);
+            }
+        ?>;
         $scope.loadContent = function(){
             $http.get("/postings").then(function(oData){
                 $scope.postings = oData.data;
@@ -23,7 +28,6 @@ layout("layout.phtml");
                 console.log(JSON.stringify(oErr));
             });
         };
-        $scope.loadContent();
     });
 
 </script>

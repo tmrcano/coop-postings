@@ -28,12 +28,30 @@ public class App
         final Oauth2 oauth = new Oauth2();
         try{
             get("/", (request, response) -> {
-                String sModel = "{}";
+                String rc = "";
+                String sModel = "{";
+                Statement oStmt = null;
                 JSONObject oInfo = oauth.getCreds(request.session().raw());
                 if(oInfo != null){
-                    sModel = "{\"currentUser\":" + oInfo.toJSONString() + "}";
+                    sModel = sModel + "\"currentUser\":" + oInfo.toJSONString() + ",";
                 }
-                return php.render("index.phtml", sModel);
+                try{
+                    oStmt = connection.createStatement();
+                    String sSQL = "SELECT * FROM jobpostings";
+                    ResultSet oRs = oStmt.executeQuery(sSQL);
+                    sModel = sModel + "\"data\":" + ResultSetValue.toJsonString(oRs) + "}";
+                    oRs.close();
+                    rc = php.render("index.phtml", sModel);
+                }catch(Exception e){
+                    e.printStackTrace();
+                }finally{
+                    try{
+                        if(oStmt != null) oStmt.close();
+                    }catch(Exception e){
+                        e.printStackTrace();
+                    }
+                }
+                return(rc);
             });
             get("/postings/:page", (request, response) -> {
                 String rc = "";
@@ -99,10 +117,17 @@ public class App
                     JSONObject oInfo = oauth.handleCode(request.queryParams("code"));
                     oInfo.put("type", sess.getAttribute("type"));
                     sess.setAttribute("creds", oInfo);
-                    response.redirect((String)sess.getAttribute("referer"));
+                    response.redirect((String) sess.getAttribute("referer"));
                 }catch(Exception e){
                     e.printStackTrace();
                 }
+                return rc;
+            });
+            get("/logout", (request, response) -> {
+                String rc = "";
+                HttpSession sess = request.session().raw();
+                sess.removeAttribute("creds");
+                response.redirect(request.headers("referer"));
                 return rc;
             });
             get("/currentUser", (request, response) -> {
