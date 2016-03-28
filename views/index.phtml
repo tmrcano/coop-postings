@@ -1,13 +1,26 @@
 <?php
-$model = new stdClass();
-$model->sTitle = "Coop Postings";
+if(!isset($model->sTitle)){
+    $model = json_decode($model);
+    $model->sTitle = "Coop Postings";
+}
 layout("layout.phtml");
 ?>
 
 <script>
-    // this is where we populate the page dynamically
-    angular.module("myApp", []).controller("myCtrl", function ($scope, $http) {
+    // this is where we populate the page dynamically *note app was defined in the layout right after the angular script tag
+    app.controller("indexCtrl", function ($scope, $http) {
+        $scope.currentUser = null;
+        <?php
+            if(isset($model->currentUser)){
+                echo '$scope.currentUser = ' . json_encode($model->currentUser);
+            }
+        ?>;
         $scope.postings = [];
+        <?php
+            if(isset($model->data)){
+                echo '$scope.postings = ' . json_encode($model->data);
+            }
+        ?>;
         $scope.loadContent = function(){
             $http.get("/postings").then(function(oData){
                 $scope.postings = oData.data;
@@ -15,15 +28,15 @@ layout("layout.phtml");
                 console.log(JSON.stringify(oErr));
             });
         };
-        $scope.loadContent();
     });
 
 </script>
 <!-- Blog Entries Column -->
-<div ng-app="myApp" ng-controller="myCtrl">
+<div ng-controller="indexCtrl">
     <h1 class="page-header">
         <?php echo $model->sTitle ?>
-        <small>making high school more engaging</small>
+        <small ng-hide="currentUser != null">making high school more engaging</small>
+        <small ng-hide="currentUser == null">opportunities for {{currentUser.name}}</small>
     </h1>
 
     <!-- Blog Posts -->
