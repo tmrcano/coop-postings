@@ -23,7 +23,7 @@ $model = $model->data[0];
 <hr>
 
 <!-- Preview Image In this spot we would put a map-->
-            <div style="overflow:hidden;height:350px;width:100%;">
+            <div style="overflow:hidden;height:300px;width:100%;">
                 <script src="https://maps.google.com/maps/api/js"></script>
                 <script>
                     var latitude = <?php echo $model->jobLocationLatitude ?>;
@@ -49,7 +49,7 @@ $model = $model->data[0];
                         infowindow.open(map, marker);
                     });
                 </script>
-                <div id="gmap_canvas" style="height:350px;width:100%;"></div>
+                <div id="gmap_canvas" style="height:300px;width:100%;"></div>
                 <style>
                     #gmap_canvas img {
                         max-width: none!important;
