@@ -61,10 +61,41 @@ $model = $model->data[0];
 <hr>
 
 <!-- Post Content ... This is where you will put in data from the database-->
-<p class="lead">Requirements</p>
-<p><?php echo $model->experienceRequirements ?></p>
-<p class="lead">Responsibilities</p>
-<p><?php echo $model->responsibilities ?></p>
+<h2>Position Information</h2>
+<h4>Job Title</h4>
+<ul>
+    <li><?php echo $model->title ?></li>
+</ul>
+
+<h4>Type of Employment</h4>
+<ul>
+    <li><?php echo $model->employmentType ?></li>
+</ul>
+
+<h2>Responsibilities</h2>
+<ul>
+    <li><?php echo $model->responsibilities ?></li>
+</ul>
+
+<h2>Qualifications and Requirements</h2>
+<ul>
+        <li><?php echo $model->educationRequirements ?></li>
+        <li><?php echo $model->qualifications ?></li>
+        <li><?php echo $model->skills ?></li>
+        <li><?php echo $model->experienceRequirements ?></li>
+</ul>
+
+<h2>Compensation and Work Hours</h2>
+<ul>
+    <li><?php echo $model->incentiveCompensation ?><?php echo $model->salaryCurrency ?></li>
+    <li><?php echo $model->workHours ?></li>
+</ul>
+
+<h2>Contact Info</h2>
+<p><?php echo $model->hiringOrganizationName ?></p>
+<p><?php echo $model->hiringOrganizationAddress ?></p>
+<p><?php echo $model->hiringOrganizationEmail ?></p>
+<p>Point of Contact: <?php echo $model->hiringOrganizationEmployeeName ?></p>
 
 <hr>
 
