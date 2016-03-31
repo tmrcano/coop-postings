@@ -49,9 +49,9 @@ layout("layout.phtml");
         </p>
         <p><span class="glyphicon glyphicon-time"></span> Posted on {{posting.datePosted}}</p>
         <hr>
-        <img class="img-responsive" src="http://placehold.it/900x300" alt="">
+        <img class="img-responsive" src="{{posting.BannerLink}}" alt="">
         <hr>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolore, veritatis, tempora, necessitatibus inventore nisi quam quia repellat ut tempore laborum possimus eum dicta id animi corrupti debitis ipsum officiis rerum.</p>
+        <p>For more information on {{posting.hiringOrganizationName}} please click <a href="/postings/{{posting.id}}">here </a>.</p>
         <a class="btn btn-primary" href="/postings/{{posting.id}}">Read More <span class="glyphicon glyphicon-chevron-right"></span></a>
 
         <hr>
